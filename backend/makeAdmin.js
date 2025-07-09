@@ -24,7 +24,7 @@ const User = mongoose.model('User', userSchema);
 
 // Update the user to be admin
 async function makeUserAdmin() {
-  const email = 'ravikantkemkc@fuck.you'; // <-- change this
+  const email = 'rsnetwor'; // <-- change this
 
   try {
     const result = await User.updateOne(
