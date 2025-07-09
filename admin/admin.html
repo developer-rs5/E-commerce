@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenux Store - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6d28d9;
+            --primary-dark: #5b21b6;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --danger: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-header h2 {
+            color: var(--light);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--gray);
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu a:hover, 
+        .sidebar-menu a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--light);
+        }
+
+        .sidebar-menu i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            color: var(--dark);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Cards */
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.2);
+        }
+
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-processing {
+            background-color: #bfdbfe;
+            color: #1e40af;
+        }
+
+        .badge-shipped {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-delivered {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Login Page */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f1f5f9;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        .login-card h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        /* Loading Overlay */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Alerts */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+            animation: slideIn 0.5s forwards;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        /* Size and Color Options */
+.size-option, .color-option {
+    position: relative;
+    padding-right: 25px !important;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.remove-option {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    color: #dc3545;
+}
+
+/* Custom Attributes */
+.custom-attribute-group {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.custom-attribute-group .form-control {
+    flex: 1;
+    min-width: 120px;
+    margin-right: 5px;
+}
+
+/* Badges for order status */
+.badge-pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.badge-processing {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.badge-shipped {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.badge-delivered {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.badge-cancelled {
+    background-color: #dc3545;
+    color: #fff;
+}
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner-border text-light" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Admin Login -->
+    <div id="login-page" class="login-container">
+        <div class="login-card">
+            <h1>Admin Login</h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Zenux Admin</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showTab('dashboard')"><i class="fas fa-chart-bar"></i> Dashboard</a></li>
+                <li><a href="#" onclick="showTab('products')"><i class="fas fa-box"></i> Products</a></li>
+                <li><a href="#" onclick="showTab('orders')"><i class="fas fa-receipt"></i> Orders</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="user-menu">
+                    <div class="user-avatar" title="Admin User">A</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <h2>Store Overview</h2>
+                    <p>Welcome to Zenux Store Admin Panel. Here you can manage products and orders.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Quick Stats</h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                        <div class="card" style="margin-bottom: 0;">
+                            <h3>Total Products</h3>
+                            <p id="total-products" style="font-size: 2rem; font-weight: bold;">0</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 0;">
+                            <h3>Pending Orders</h3>
+                            <p id="pending-orders" style="font-size: 2rem; font-weight: bold;">0</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 0;">
+                            <h3>Revenue</h3>
+                            <p id="total-revenue" style="font-size: 2rem; font-weight: bold;">$0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Tab -->
+            <div id="products" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Product Management</h2>
+                        <button class="btn btn-primary" onclick="showProductForm()">
+                            <i class="fas fa-plus"></i> Add Product
+                        </button>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Image</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Tags</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-list">
+                            <!-- Product rows will be added here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Product Form (Hidden by default) -->
+            <div id="product-form-container" class="card" style="display: none;">
+                <div class="card-header">
+                    <h2 id="product-form-title">Add New Product</h2>
+                    <button class="btn btn-danger" onclick="hideProductForm()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+                <form id="product-form">
+                    <input type="hidden" id="product-id">
+                    <div class="form-group">
+                        <label for="product-name">Product Name</label>
+                        <input type="text" id="product-name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Price ($)</label>
+                        <input type="number" id="product-price" class="form-control" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-stock">Stock Quantity</label>
+                        <input type="number" id="product-stock" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="main-image-url">Main Image URL</label>
+                        <input type="text" id="main-image-url" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Additional Images</label>
+                        <div id="additional-images-container"></div>
+                        <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addAdditionalImageInput()">
+                            <i class="fas fa-plus"></i> Add Another Image
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <div id="tags-container"></div>
+                        <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addTagInput()">
+                            <i class="fas fa-plus"></i> Add Another Tag
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-brand">Brand</label>
+                        <input type="text" id="product-brand" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-category">Category</label>
+                        <input type="text" id="product-category" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-description">Description</label>
+                        <textarea id="product-description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+    <label>Size Options (Optional)</label>
+    <div class="d-flex flex-wrap gap-2 mb-2" id="size-options-container">
+        <!-- Size buttons will be added here dynamically -->
+    </div>
+    <div class="input-group">
+        <input type="text" id="new-size-input" class="form-control" placeholder="Add size (e.g., S, M, L)">
+        <div class="input-group-append">
+            <button type="button" class="btn btn-primary" onclick="addSizeOption()">Add Size</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label>Color Options (Optional)</label>
+    <div class="d-flex flex-wrap gap-2 mb-2" id="color-options-container">
+  
+    </div>
+    <div class="input-group">
+        <input type="text" id="new-color-input" class="form-control" placeholder="Add color (e.g., Black, White)">
+        <div class="input-group-append">
+            <button type="button" class="btn btn-primary" onclick="addColorOption()">Add Color</button>
+        </div>
+    </div>
+</div>
+
+
+<div class="form-group">
+    <label>Custom Attributes (Optional)</label>
+    <div id="custom-attributes-container">
+     
+    </div>
+    <button type="button" class="btn btn-secondary mt-2" onclick="addCustomAttributeField()">
+        <i class="fas fa-plus"></i> Add Custom Attribute
+    </button>
+</div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Product
+                    </button>
+                </form>
+            </div>
+
+            <!-- Orders Tab -->
+            <div id="orders" class="tab-content">
+                <div class="tabs">
+                    <div class="tab active" onclick="filterOrders('all')">All</div>
+                    <div class="tab" onclick="filterOrders('pending')">Pending</div>
+                    <div class="tab" onclick="filterOrders('processing')">Processing</div>
+                    <div class="tab" onclick="filterOrders('shipped')">Shipped</div>
+                    <div class="tab" onclick="filterOrders('delivered')">Delivered</div>
+                </div>
+                <div class="card">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-list">
+                            <!-- Order rows will be added here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
